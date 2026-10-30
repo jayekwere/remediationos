@@ -1,0 +1,33 @@
+{
+  "observed_at": "2026-10-30T18:41:21.177799+00:00",
+  "source_commit": "6230b37079bb38b26ec59a7d0fcefa5f93f263a3",
+  "mutations": false,
+  "scope": "Native public-feed import and approved-record PR revision binding only; no real finding closure or deployment",
+  "enrichment": {
+    "status": "verified-native-feed-import",
+    "result": {
+      "cve": "CVE-2021-44228",
+      "epss": 0.99999,
+      "kev": true,
+      "as_of": "2026-10-30T00:00:00Z",
+      "provenance": "first-cisa-import"
+    },
+    "epss_url": "https://api.first.org/data/v1/epss?cve=CVE-2021-44228",
+    "kev_url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+    "epss_response_sha256": "68ce8c8e68dc141b6f530f53c453805cb31239154ebc68405e40b57bede8a0c9",
+    "kev_response_sha256": "3aa9cf3c01f116362a29d111702979175453c425e3733bde80fc4f6f8e2294e5"
+  },
+  "github_pr": {
+    "status": "verified-native-readback",
+    "url": "https://github.com/jayekwere/remediationos/pull/1",
+    "receipt": {
+      "repository": "jayekwere/remediationos",
+      "number": 1,
+      "head_sha": "a6eff84aaf8f622bbeb92129b30c65a1a608bae1",
+      "merged": false,
+      "closure_authorized": false
+    },
+    "wrong_revision_rejected": true,
+    "approval_input": "Synthetic approved record for adapter verification; no finding was mutated"
+  }
+}

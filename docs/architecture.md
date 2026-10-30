@@ -34,6 +34,6 @@ Core domain decisions are separated from HTTP, CLI and external integration adap
 
 ## Unresolved integration scope
 
-Live feed retrieval, real external scanner identity and real GitHub PR verification are unverified. There is no automatic patch application. No SSO, credential rotation service, distributed workers or production availability claim. Public demo identities are not separation between real people.
+Native FIRST/CISA feed import and GitHub PR revision readback have been exercised, as recorded in [live read verification](live-read-verification.json). Automatic feed polling, real external scanner identity and authenticated CI rescan evidence remain outside the implemented scope. There is no automatic patch application. No SSO, credential rotation service, distributed workers or production availability claim. Public demo identities are not separation between real people.
 
 See the README for exact setup, sample outputs, decision semantics and limits. The threat model distinguishes hypotheses from source-established controls.
