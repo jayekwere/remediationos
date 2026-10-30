@@ -1,11 +1,11 @@
 {
-  "verified_commit": "7c0e34ec6aa2f929f5add89df336ba4ee4401d9b",
-  "run_url": "https://github.com/jayekwere/remediationos/actions/runs/41094599510",
-  "run_id": 41094599510,
+  "verified_commit": "3a83404d1d1869b8d2140eae06a6cddfa5809359",
+  "run_url": "https://github.com/jayekwere/remediationos/actions/runs/41095413883",
+  "run_id": 41095413883,
   "conclusion": "success",
   "jobs": [
     {
-      "id": 124196974763,
+      "id": 124199765967,
       "name": "verify",
       "conclusion": "success",
       "steps": [
@@ -98,12 +98,12 @@
   ],
   "artifacts": [
     {
-      "id": 12996045933,
+      "id": 12995108109,
       "name": "verification-evidence",
-      "digest": "sha256:7ed27a11f81e221965a1d8b76dec878017f11318be6d85623630519ffc354fa5",
-      "size_in_bytes": 173684,
-      "expires_at": "2026-11-13T16:58:58Z"
+      "digest": "sha256:3f1559c466b88dd3dd4c2e891d2af2d3e307cb6f68913bc029c425fec9d5f400",
+      "size_in_bytes": 172793,
+      "expires_at": "2026-11-13T17:04:28Z"
     }
   ],
-  "scope": "Exact verified snapshot. Later main commits have separately observable workflow runs. Cloud account integration limits remain as documented."
+  "scope": "Exact verified commit. A later documentation-only record commit can have a separate green run. Cloud account integration limits remain as documented."
 }
