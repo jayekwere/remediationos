@@ -1,0 +1,121 @@
+{
+  "mode": "synthetic-offline",
+  "result": {
+    "approved_at": "2026-10-30T12:00:00Z",
+    "approved_by": "blair",
+    "asset": "synthetic:service/api",
+    "created_by": "alex",
+    "cve": "CVE-2099-0001",
+    "cvss_base": 9.8,
+    "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "enrichment": {
+      "as_of": "2026-10-30T00:00:00Z",
+      "cve": "CVE-2099-0001",
+      "epss": 0.72,
+      "kev": true,
+      "provenance": "synthetic"
+    },
+    "id": "demo-001",
+    "intake_sha256": "b9cb2848ed4c36f6065454b2f011b213e75ce55cf1b21f7600b9714430c52dcb",
+    "observed_at": "2026-10-30T10:00:00Z",
+    "owner": "platform",
+    "priority": "P0",
+    "proposal": {
+      "artifact_sha256": "9047b391770ca346eb5ec1991f958c41e88d11b2fa877f1f31b8ad75bd557a89",
+      "diff": "--- a/requirements.txt\n+++ b/requirements.txt\n@@ -1 +1 @@\n-synthetic-parser==1.0.0\n+synthetic-parser==2.0.0\n",
+      "fix": "Upgrade synthetic-parser to 2.0.0",
+      "target_revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "proposal_sha256": "c69d9e7547daa4f255b593912f982a7418de1f6e5c9bfea6a5c88d089d9fd3b9",
+    "proposed_by": "alex",
+    "repository": "synthetic/service",
+    "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "source": "synthetic-scanner",
+    "state": "closed",
+    "closure": {
+      "method": "trusted_rescan_evidence",
+      "verifier": "casey",
+      "evidence": {
+        "asset": "synthetic:service/api",
+        "repository": "synthetic/service",
+        "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "artifact_sha256": "9047b391770ca346eb5ec1991f958c41e88d11b2fa877f1f31b8ad75bd557a89",
+        "scanner": "synthetic-package-rescan",
+        "complete": true,
+        "checked_cves": [
+          "CVE-2099-0001"
+        ],
+        "observed_cves": [],
+        "observed_at": "2026-10-30T12:00:00Z"
+      },
+      "evidence_sha256": "67ae8882fe0ce290dd991782a0f95ab469c989c82ad324687e7cfff01554cb27"
+    }
+  },
+  "evidence": {
+    "tenant": "alder",
+    "events": [
+      {
+        "seq": 1,
+        "payload": {
+          "action": "ingested",
+          "actor": "alex",
+          "at": "2026-10-30T12:00:00Z",
+          "record": {
+            "id": "demo-001",
+            "intake_sha256": "b9cb2848ed4c36f6065454b2f011b213e75ce55cf1b21f7600b9714430c52dcb"
+          },
+          "tenant": "alder"
+        },
+        "previous": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "0fdd775446054a5152405bced820d8408e5c46d73684e364b69cb1aaf2384b7d"
+      },
+      {
+        "seq": 2,
+        "payload": {
+          "action": "proposed",
+          "actor": "alex",
+          "at": "2026-10-30T12:00:00Z",
+          "record": {
+            "id": "demo-001",
+            "proposal_sha256": "c69d9e7547daa4f255b593912f982a7418de1f6e5c9bfea6a5c88d089d9fd3b9"
+          },
+          "tenant": "alder"
+        },
+        "previous": "0fdd775446054a5152405bced820d8408e5c46d73684e364b69cb1aaf2384b7d",
+        "hash": "026615640a07186c3ee0fac513c70f31f92da5a97a2d1d59a68585f86a936e14"
+      },
+      {
+        "seq": 3,
+        "payload": {
+          "action": "approved",
+          "actor": "blair",
+          "at": "2026-10-30T12:00:00Z",
+          "record": {
+            "id": "demo-001",
+            "proposal_sha256": "c69d9e7547daa4f255b593912f982a7418de1f6e5c9bfea6a5c88d089d9fd3b9"
+          },
+          "tenant": "alder"
+        },
+        "previous": "026615640a07186c3ee0fac513c70f31f92da5a97a2d1d59a68585f86a936e14",
+        "hash": "5d1d4cba6155822bc6ed5e4a4d781b5bba037fc336d1856eaf8a4b00bd57a337"
+      },
+      {
+        "seq": 4,
+        "payload": {
+          "action": "closed",
+          "actor": "casey",
+          "at": "2026-10-30T12:00:00Z",
+          "record": {
+            "evidence_sha256": "67ae8882fe0ce290dd991782a0f95ab469c989c82ad324687e7cfff01554cb27",
+            "id": "demo-001"
+          },
+          "tenant": "alder"
+        },
+        "previous": "5d1d4cba6155822bc6ed5e4a4d781b5bba037fc336d1856eaf8a4b00bd57a337",
+        "hash": "deb4bac23aef7f321d0f50d6d8d9c004950751d063241da8157d59cbbe3744fc"
+      }
+    ],
+    "checkpoint": "deb4bac23aef7f321d0f50d6d8d9c004950751d063241da8157d59cbbe3744fc",
+    "integrity": "verified_local_chain"
+  }
+}

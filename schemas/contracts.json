@@ -1,0 +1,261 @@
+{
+  "Operation": {
+    "additionalProperties": false,
+    "properties": {
+      "operation": {
+        "enum": [
+          "ingest",
+          "propose",
+          "approve",
+          "rescan",
+          "close",
+          "list",
+          "evidence"
+        ],
+        "title": "Operation",
+        "type": "string"
+      },
+      "record_id": {
+        "default": "",
+        "pattern": "^[a-z0-9-]{0,128}$",
+        "title": "Record Id",
+        "type": "string"
+      },
+      "data": {
+        "additionalProperties": true,
+        "title": "Data",
+        "type": "object"
+      }
+    },
+    "required": [
+      "operation"
+    ],
+    "title": "Operation",
+    "type": "object"
+  },
+  "Intake": {
+    "$defs": {
+      "Enrichment": {
+        "additionalProperties": false,
+        "properties": {
+          "cve": {
+            "pattern": "^CVE-\\d{4}-\\d{4,}$",
+            "title": "Cve",
+            "type": "string"
+          },
+          "epss": {
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Epss",
+            "type": "number"
+          },
+          "kev": {
+            "title": "Kev",
+            "type": "boolean"
+          },
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "provenance": {
+            "enum": [
+              "synthetic",
+              "first-cisa-import"
+            ],
+            "title": "Provenance",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cve",
+          "epss",
+          "kev",
+          "as_of",
+          "provenance"
+        ],
+        "title": "Enrichment",
+        "type": "object"
+      },
+      "Finding": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "pattern": "^[a-z0-9-]{1,64}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "asset": {
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Asset",
+            "type": "string"
+          },
+          "repository": {
+            "pattern": "^[\\w.-]+/[\\w.-]+$",
+            "title": "Repository",
+            "type": "string"
+          },
+          "cve": {
+            "pattern": "^CVE-\\d{4}-\\d{4,}$",
+            "title": "Cve",
+            "type": "string"
+          },
+          "cvss_vector": {
+            "maxLength": 128,
+            "title": "Cvss Vector",
+            "type": "string"
+          },
+          "observed_at": {
+            "title": "Observed At",
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "synthetic-scanner",
+              "authorized-import"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "revision": {
+            "pattern": "^[a-f0-9]{40}$",
+            "title": "Revision",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "asset",
+          "repository",
+          "cve",
+          "cvss_vector",
+          "observed_at",
+          "source",
+          "revision"
+        ],
+        "title": "Finding",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "finding": {
+        "$ref": "#/$defs/Finding"
+      },
+      "enrichment": {
+        "$ref": "#/$defs/Enrichment"
+      }
+    },
+    "required": [
+      "finding",
+      "enrichment"
+    ],
+    "title": "Intake",
+    "type": "object"
+  },
+  "Proposal": {
+    "additionalProperties": false,
+    "properties": {
+      "target_revision": {
+        "pattern": "^[a-f0-9]{40}$",
+        "title": "Target Revision",
+        "type": "string"
+      },
+      "artifact_sha256": {
+        "pattern": "^[a-f0-9]{64}$",
+        "title": "Artifact Sha256",
+        "type": "string"
+      },
+      "fix": {
+        "maxLength": 4000,
+        "minLength": 12,
+        "title": "Fix",
+        "type": "string"
+      },
+      "diff": {
+        "maxLength": 20000,
+        "minLength": 12,
+        "title": "Diff",
+        "type": "string"
+      }
+    },
+    "required": [
+      "target_revision",
+      "artifact_sha256",
+      "fix",
+      "diff"
+    ],
+    "title": "Proposal",
+    "type": "object"
+  },
+  "Rescan": {
+    "additionalProperties": false,
+    "properties": {
+      "asset": {
+        "title": "Asset",
+        "type": "string"
+      },
+      "repository": {
+        "title": "Repository",
+        "type": "string"
+      },
+      "revision": {
+        "pattern": "^[a-f0-9]{40}$",
+        "title": "Revision",
+        "type": "string"
+      },
+      "artifact_sha256": {
+        "pattern": "^[a-f0-9]{64}$",
+        "title": "Artifact Sha256",
+        "type": "string"
+      },
+      "scanner": {
+        "enum": [
+          "synthetic-package-rescan",
+          "trusted-ci-attestation"
+        ],
+        "title": "Scanner",
+        "type": "string"
+      },
+      "complete": {
+        "const": true,
+        "title": "Complete",
+        "type": "boolean"
+      },
+      "checked_cves": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 10000,
+        "minItems": 1,
+        "title": "Checked Cves",
+        "type": "array"
+      },
+      "observed_cves": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 10000,
+        "title": "Observed Cves",
+        "type": "array"
+      },
+      "observed_at": {
+        "title": "Observed At",
+        "type": "string"
+      }
+    },
+    "required": [
+      "asset",
+      "repository",
+      "revision",
+      "artifact_sha256",
+      "scanner",
+      "complete",
+      "checked_cves",
+      "observed_cves",
+      "observed_at"
+    ],
+    "title": "Rescan",
+    "type": "object"
+  }
+}
