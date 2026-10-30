@@ -2,58 +2,63 @@
 
 ## Overview
 
-Intended use: the runnable repository implementation and its documented local demo. The user requested an open-source implementation with honest security scope. This model describes inspected source, not a security certification or a claim of complete audit coverage.
+RemediationOS is a FastAPI and SQLite lifecycle service with a TypeScript browser operation workbench. Authenticated identities supply tenant, subject and roles. Repository ownership is server-configured. Findings pass through enrichment, proposed fixes, independent approval and exact-artifact rescan checks before closure. The offline CLI uses temporary state; served demos use persistent configured state. Optional feed-import and GitHub read helpers have separate, limited authority. One independent fresh-context read-only review confirmed the unchanged runtime boundaries and informed this revision. This model is not a security certification or completed audit.
 
-Data flow: Bearer identity --> tenant ownership --> intake/enrichment --> proposal --> independent approval --> exact artifact rescan evidence --> independent closure --> transactional audit.
-
-| Component/source | Responsibility |
+| Component | Source and role |
 | --- | --- |
-| `app/api.py:66` | Authenticated operation API and bounded request body middleware |
-| `app/common.py:176` | Trusted token-to-tenant/subject/role mapping |
-| `app/lifecycle.py:83` | State transitions, owner binding, approval and closure invariants |
-| `app/rescan.py:9` | Actual deterministic fictional-package scanner |
-| `app/github.py:21` | Optional read-only PR head/repository binding |
+| HTTP operations | `app/api.py:66`, authentication and request controls |
+| Trusted identities and state | `app/common.py:56`, `app/common.py:176` |
+| Ownership and lifecycle | `app/lifecycle.py:83` |
+| Fictional-package scanner | `app/rescan.py:9` |
+| Saved official-feed import | `app/enrichment.py:9` |
+| Optional PR revision readback | `app/github.py:21` |
+| Browser operation parser/display | `web/app.ts:17` |
 
-| Deployment or workflow | Resource/configuration and effective location | Readers, writers or recipients | Enforcing control or unknown |
-| --- | --- | --- | --- |
-| Configured service credentials | IDENTITY_FILE private JSON token map; OWNER_FILE tenant/repository owner map | Server memory and trusted operator | CLI rejects short credentials and group/other-readable identity files; direct factory callers own equivalent provisioning |
-| Configured state | STATE_PATH or artifacts/state.db, relative to working directory | Tenant-scoped authenticated actors; server process | SQLite WAL, parameterized composite tenant keys, immediate transactions; database mode 0600; directory must be private |
-| Offline demo | Temporary database; samples/vulnerable.txt and samples/fixed.txt | Synthetic demo actors | Actual bounded fictional scanner; fixed clock; temporary state removed |
-| Browser demo rescan | Only explicit demo mode; fixed allowlisted samples/fixed.txt | Verifier role | Invokes actual scanner, then closure validates the approved artifact digest; no custom source path |
-| PR evidence helper | Fixed https://api.github.com/repos/{repository}/pulls/{number} | GitHub receives operator token | No redirects; exact proposed head and repository match; never authorizes closure |
+| Deployment or workflow | Resource or capability | Configuration and precedence | Safe effective value or location | Readers, writers, or recipients | Enforcing control | Evidence or unknowns |
+| --- | --- | --- | --- | --- | --- | --- |
+| Configured CLI service | Identity map | IDENTITY_FILE then JSON Identity validation | Operator-selected private file, relative to CWD when relative | Service memory and trusted operator | Owner-only file mode, tokens at least 32 characters, strict identities | `app/cli.py:60`; factory callers own equivalent provisioning |
+| Configured CLI service | Ownership map | OWNER_FILE then Lifecycle owners | Operator-selected tenant/repository/owner map | Service and trusted operator | Explicit map required; authenticated-tenant repository membership | `app/cli.py:71`, `app/api.py:83`, `app/lifecycle.py:88`; file privacy is host-owned |
+| Served configured/demo mode | Persistent state | STATE_PATH or artifacts/state.db | Selected database or cwd/artifacts/state.db and SQLite companions | Service and tenant-scoped callers | Database 0600, parameterized tenant keys, immediate WAL transactions | `app/cli.py:68`, `app/common.py:56`; directory and companion privacy remain host responsibilities |
+| Offline CLI demo | Temporary state and fixture inputs | TemporaryDirectory, workflow.json, fixed.txt | Temporary demo.db; cwd/samples/workflow.json and fixed.txt | Synthetic actors and stdout consumer | Fixed clock, local scanner, temporary lifecycle | `app/cli.py:19`; vulnerable.txt is separately exercised by tests |
+| Compose service | Persistent state/listener | WORKDIR /app, state volume, HOST=0.0.0.0 and loopback publication | /app/artifacts/state.db in engine-managed state volume; host 127.0.0.1:8080 | UID 10001 process, host and loopback clients | Read-only root, no capabilities, no-new-privileges and resource limits | `Dockerfile:9`, `compose.yaml:4`; engine host backing path is deployment-specific |
+| Container smoke workflow | Ephemeral state | Explicit /app/artifacts tmpfs | Database in UID/GID 10001 mode-0700 tmpfs | Synthetic process | Private tmpfs and container removal | `scripts/container-smoke.mjs:17` |
+| Browser demo rescan | Fixed fictional artifact | Verifier operation, explicit demo mode, no custom input | cwd/samples/fixed.txt or /app/samples/fixed.txt | Scanner and authenticated verifier | Approved synthetic finding required; closure independently checks digest | `app/api.py:147`, `app/rescan.py:9` |
+| Feed library | Supplied provider-shaped data | Caller supplies EPSS and KEV objects | In-memory dated enrichment record | Caller and lifecycle intake | Exact CVE coverage, counts and date-consistency checks | `app/enrichment.py:9`; retrieval/authenticity remain caller-owned |
+| Optional PR library | Repository/head readback | Caller supplies approved record, PR number and token | Fixed api.github.com/repos/bound-repository/pulls/number | GitHub receives caller token | No redirects, 10-second timeout, exact repository/head match, closure_authorized false | `app/github.py:21`; no patch, branch, merge or closure operation |
+| Verification CI | Synthetic evidence export | Tests/demo and artifact upload | artifacts/, coverage and browser evidence; 14-day retention | GitHub artifact readers | Pinned actions, contents:read, disabled checkout credentials, synthetic inputs | `.github/workflows/verify.yml:7`, `.github/workflows/verify.yml:17`; real secrets must stay outside exported paths |
 
 ## Threat Model, Trust Boundaries, and Assumptions
 
-Protected assets: Tenant findings, ownership, proposal/artifact digests, independent approval identities, rescan evidence, bearer credentials and audit history.
+Protected assets are bearer credentials, ownership configuration, tenant findings, proposal and artifact digests, independent approval identities, rescan evidence and transactional audit history. An unauthenticated caller may reach UI/health routes but cannot invoke protected operations without credentials. An analyst can submit supported findings and patch text within its configured tenant; request JSON cannot select tenant or owner. Host administrators, configuration owners and trusted maintainers already control code and private state and are outside isolation (`SECURITY.md:6`, `app/api.py:96`, `app/common.py:84`).
 
-The identity map supplies tenant and roles, independent of request JSON. Repository ownership is checked against the same tenant. Proposal approval binds its digest and requires a different subject; verification requires a third subject. Closure checks revision, artifact hash, scope, timestamp and absence of the target CVE in an explicitly covered completed scan. External CI evidence is a trusted verifier assertion, not an authenticated CI signature. The synthetic scanner is limited to fictional inputs and cannot close imported real findings.
+Strict contracts reject extra fields. Identity-derived role checks and tenant-scoped database lookups are distinct from Host/Origin, 1 MiB body, CSP and data-only rendering controls. The TypeScript component is an operation workbench; it is not a separate stateless authorization service (`app/common.py:16`, `app/api.py:36`, `app/api.py:107`, `web/app.ts:17`).
 
-Host administrators, private configuration owners and trusted repository maintainers can alter code, files and private state. They are trusted. An ordinary input author does not gain those capabilities by supplying JSON. Public demo credentials represent synthetic roles in one trusted local demonstration. The local stateless TypeScript evaluators do not establish authenticated service tenancy; the Python services derive tenancy from trusted identities. External assertions retain their stated trust prerequisites.
+Proposal approval binds its digest and excludes the proposing subject. Closure requires a third subject and exact asset, repository, approved revision, artifact SHA-256, covered CVE, complete scan and freshness. A PR link or an unrelated clean report cannot close a finding. The fictional scanner can close only the explicitly synthetic finding, never an imported real finding (`app/lifecycle.py:136`, `app/lifecycle.py:158`, `app/lifecycle.py:175`, `app/lifecycle.py:184`).
 
-Live feed retrieval, real external scanner identity and real GitHub PR verification are unverified. There is no automatic patch application. No SSO, credential rotation service, distributed workers or production availability claim. Public demo identities are not separation between real people.
+A trusted verifier may submit trusted-ci-attestation evidence. This remains that verifier's assertion, not a cryptographically authenticated CI artifact or verified external scanner identity. Truthfulness and credential provisioning are trusted. Public demo roles do not prove independent people. Configured identities must map distinct subjects to separately controlled credentials. No automatic external rescan, patch application or merge is implemented (`app/lifecycle.py:65`, `app/lifecycle.py:175`).
+
+The feed importer validates supplied data, not its network origin. The PR helper reads one fixed API origin without redirects, trusts its supplied approved record and never authorizes closure. Provided runtime verification, separately recorded in `docs/live-read-verification.json:1`, exercised native FIRST/CISA import for CVE-2021-44228, an existing repository PR head read and rejection of a wrong head. Its approval input was synthetic. No finding or PR changed, and no real vulnerability rescan or deployment was verified.
+
+State updates and audit append share one SQLite transaction. Local hash-chain verification checks consistency of retained rows but cannot prevent a trusted database owner rewriting or truncating the entire sequence (`app/common.py:68`, `app/common.py:102`, `app/common.py:123`). Existing directory privacy, ownership files and container volume access remain host obligations. Private paths, snapshot/key/environment files are excluded from accidental packaging, not authenticated by those exclusions (`.dockerignore:11`).
+
+There is no SSO, credential-rotation service, general asset discovery, distributed worker, automatic feed poller or production availability claim. The reference implementation's closure checks do not prove deployment into a real service. Missing account/scanner verification must remain explicit.
 
 ## Attack Surface, Mitigations, and Attacker Stories
 
-These are threat scenarios and review obligations, not reported vulnerabilities. Priority describes plausible impact if the named control fails in its stated deployment. The source table above identifies the actual consumers and controls.
+These are review hypotheses, not validated findings.
 
-| Priority | Scenario and potential capability gain | Existing source-established controls | Additional mitigation or prerequisite |
-| --- | --- | --- | --- |
-| High | An authenticated user reads or changes another tenant record. | All database object keys and queries include the authenticated tenant; input contracts reject tenant selection. | Keep identity provisioning trusted; test new read and write paths. |
-| High | A proposer approves or verifies their own patch using combined roles. | Subject separation is enforced independently of role possession. | Map distinct subjects to distinct people and protect credentials. |
-| High | An unrelated, stale or fabricated clean report closes a finding. | Exact artifact/revision/asset/repository/CVE/freshness checks; independent verifier required. | Verifier truthfulness remains trusted; add authenticated CI artifact retrieval before claiming external attestation verification. |
-| Medium | A state transition succeeds while its audit evidence is lost. | State and audit append commit in the same SQLite transaction. | Keep private durable storage and export external checkpoints; local chain cannot resist owner rewrite/truncation. |
+| Priority | Scenario and capability gain | Prerequisites | Impact | Existing controls | Mitigation | Evidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| High | Authenticated user reads or changes another tenant record | Valid limited credential and reachable service | Cross-tenant disclosure or mutation | Identity-derived tenant, owner map, strict payloads, parameterized tenant keys | Test every new read/write path and protect provisioning | `app/common.py:84`, `app/lifecycle.py:88` |
+| High | Proposer approves or verifies its own fix through combined roles | One subject holds multiple roles | Bypassed independent decision | Subject separation independently of roles | Use separately controlled credentials for real people | `app/lifecycle.py:158`, `app/lifecycle.py:175` |
+| High | Fabricated or unrelated clean evidence closes a finding | Verifier authority or bypassed evidence boundary | Incorrect remediation closure | Exact artifact/revision/asset/repository/CVE/freshness checks | Authenticate external CI artifacts before claiming external scanner identity | `app/lifecycle.py:175` |
+| Medium | Fresh feed labels hide missing CVE coverage or stale data | Caller supplies provider-shaped data | Misprioritization | Exact EPSS record, KEV count and date checks; lifecycle freshness | Preserve official source snapshots and retrieval provenance | `app/enrichment.py:9`, `app/lifecycle.py:88` |
+| Medium | State commits while audit evidence is lost | Fault or faulty transition implementation | Incomplete lifecycle evidence | One SQLite transaction for state and audit | Durable private storage and external checkpoints | `app/common.py:68`, `app/common.py:102` |
+| Low | PR existence or merge status is mistaken for closure authority | Misreading helper output | Overstated remediation evidence | closure_authorized false and separate closure API | Keep PR readback distinct from exact-artifact rescan | `app/github.py:21`, `app/lifecycle.py:175` |
 
 ## Severity Calibration (Critical, High, Medium, Low)
 
-Critical would require a credible unauthenticated path to broad privileged external execution or equivalent cross-tenant compromise. This model does not establish such a path. A fictional sandbox state change is not critical cloud compromise.
-
-High includes a reachable authorization, approval or gate bypass that grants a materially new capability over another tenant or a deployment decision, with the required privileged consuming workflow present. An input author changing their own local file is a counterexample.
-
-Medium includes bounded local denial of service, decision-fidelity loss or evidence misbinding under realistic deployment prerequisites. Merely changing trusted policy as its administrator is a counterexample.
-
-Low includes limited presentation/integrity confusion without a new privileged operation. A string that is safely rendered as text is controlled behavior, not an injection finding. Confidence depends on source and executable evidence, independently of impact.
-
-One fresh-context independent read-only architecture review informed this model. Source changed during construction; the parent rechecked the controls and source anchors after the reported discrepancies were fixed. Verified negatives are recorded in tests and verification artifacts. External account behavior remains unverified wherever stated.
+Critical requires a credible route to broad unauthorized authority, not a fictional package result. High applies to reachable tenant, independent-subject or evidence-binding bypasses that grant a new capability over another tenant or a real consuming decision. Medium covers bounded availability, confidentiality or decision-fidelity effects with actual prerequisites. Low covers limited presentation or workflow confusion without a new privileged operation. A trusted verifier's explicit authority and a host owner's file edits are existing trust, not newly gained attacker privilege. Native adapter reads improve confidence only in those reads and do not establish real finding closure.
 
 Repository: https://github.com/jayekwere/remediationos
-Version: cf0bb61277581b7ea021fca62b9c18bc383923d5
+Version: 0ce7c92ad9c401e63e934b767d982b587595b49b
