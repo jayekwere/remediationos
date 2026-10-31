@@ -72,3 +72,5 @@ Demo identities are public synthetic credentials, so the demo is not real separa
 Configured serve mode requires `IDENTITY_FILE` pointing to a private JSON map from random bearer tokens of at least 32 characters to `{tenant, subject, roles}`. It also requires `OWNER_FILE`, mapping tenant to repository to owner. Set `STATE_PATH` for persistent private state. The CLI validates identity file permissions. Direct factory callers own equivalent credential provisioning. Roles are analyst, approver, verifier, operator and viewer; each operation checks its required role. There are no default production credentials.
 
 See [SECURITY.md](SECURITY.md) and [CONTRIBUTING.md](CONTRIBUTING.md). MIT covers this repository's original code; dependencies retain their respective licenses.
+
+The [security audit record](docs/security-audit.json) documents the fragmented request hardening, adversarial regression checks and measurement scope. Offline sample output is unchanged.

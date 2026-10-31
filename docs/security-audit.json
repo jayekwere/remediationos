@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-31",
+  "audited_revision": "b551fe75acb22a814b8e1b76e77ddb639a7537f7",
+  "scope": "All 53 current tracked source, tests, fixtures, delivery and documentation paths before hardening; independent baseline and focused reviews plus parent validation.",
+  "findings": [
+    {
+      "id": "fragmented-body-replay",
+      "severity": "low",
+      "status": "fixed",
+      "change": "Byte-proportional buffering and one completed replay; incomplete disconnect remains incomplete."
+    }
+  ],
+  "verification": {
+    "python_tests": 29,
+    "typescript_tests": 1,
+    "browser_tests": 1,
+    "python_branch_inclusive_coverage_percent": 94.23,
+    "typescript_imported_contract_line_coverage_percent": 100,
+    "lint_and_typechecking": "passed",
+    "restricted_container": "passed",
+    "offline_demo": "byte-identical to samples/output.json",
+    "controlled_asgi": {
+      "input_bytes": 100000,
+      "nonempty_frames": 100000,
+      "before_peak_traced_bytes": 19202328,
+      "after_peak_traced_bytes": 208049,
+      "wire_exhaustion_tested": false
+    }
+  },
+  "limitations": [
+    "Reference implementation, not a production security certification.",
+    "Actual network fragmentation and exhaustion thresholds were not measured.",
+    "External scanner identity and trusted CI attestations remain operator assertions; no new external account acceptance is claimed."
+  ],
+  "hosted_ci": "https://github.com/jayekwere/remediationos/actions/workflows/verify.yml"
+}

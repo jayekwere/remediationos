@@ -22,7 +22,7 @@ flowchart LR
 | --- | --- | --- | --- |
 | Configured service credentials | IDENTITY_FILE private JSON token map; OWNER_FILE tenant/repository owner map | Server memory and trusted operator | CLI rejects short credentials and group/other-readable identity files; direct factory callers own equivalent provisioning |
 | Configured state | STATE_PATH or artifacts/state.db, relative to working directory | Tenant-scoped authenticated actors; server process | SQLite WAL, parameterized composite tenant keys, immediate transactions; database mode 0600; directory must be private |
-| Offline demo | Temporary database; samples/vulnerable.txt and samples/fixed.txt | Synthetic demo actors | Actual bounded fictional scanner; fixed clock; temporary state removed |
+| Offline CLI demo | Temporary database; samples/workflow.json and samples/fixed.txt | Synthetic demo actors | Actual bounded fictional scanner; fixed clock; temporary state removed |
 | Browser demo rescan | Only explicit demo mode; fixed allowlisted samples/fixed.txt | Verifier role | Invokes actual scanner, then closure validates the approved artifact digest; no custom source path |
 | PR evidence helper | Fixed https://api.github.com/repos/{repository}/pulls/{number} | GitHub receives operator token | No redirects; exact proposed head and repository match; never authorizes closure |
 
@@ -37,3 +37,5 @@ Core domain decisions are separated from HTTP, CLI and external integration adap
 Native FIRST/CISA feed import and GitHub PR revision readback have been exercised, as recorded in [live read verification](live-read-verification.json). Automatic feed polling, real external scanner identity and authenticated CI rescan evidence remain outside the implemented scope. There is no automatic patch application. No SSO, credential rotation service, distributed workers or production availability claim. Public demo identities are not separation between real people.
 
 See the README for exact setup, sample outputs, decision semantics and limits. The threat model distinguishes hypotheses from source-established controls.
+
+BodyLimit accumulates at most 1 MiB of raw body bytes before parsing. It uses a bounded byte buffer and replays one completed request message; an incomplete upload followed by disconnect is not treated as a completed operation. Served demos persist their configured state, while the offline CLI uses temporary state.
