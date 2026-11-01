@@ -74,3 +74,7 @@ Configured serve mode requires `IDENTITY_FILE` pointing to a private JSON map fr
 See [SECURITY.md](SECURITY.md) and [CONTRIBUTING.md](CONTRIBUTING.md). MIT covers this repository's original code; dependencies retain their respective licenses.
 
 The [security audit record](docs/security-audit.json) documents the fragmented request hardening, adversarial regression checks and measurement scope. Offline sample output is unchanged.
+
+---
+
+**AI assistance:** AI tools helped with code or documentation.
