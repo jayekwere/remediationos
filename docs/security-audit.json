@@ -33,5 +33,6 @@
     "Actual network fragmentation and exhaustion thresholds were not measured.",
     "External scanner identity and trusted CI attestations remain operator assertions; no new external account acceptance is claimed."
   ],
-  "hosted_ci": "https://github.com/jayekwere/remediationos/actions/workflows/verify.yml"
+  "hosted_ci": "https://github.com/jayekwere/remediationos/actions/workflows/verify.yml",
+  "hosted_ci_dependency_hardening": "Browser setup uses the official HTTPS Ubuntu archive mirror, bounded APT network timeouts and a five-minute step limit. This addresses a runner mirror timeout observed during this five-project audit; package signature verification remains enabled."
 }
